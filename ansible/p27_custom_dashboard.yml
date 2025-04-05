@@ -1,0 +1,13 @@
+- hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Import Grafana dashboard using basic auth
+      community.grafana.grafana_dashboard:
+        grafana_url: "https://ucabpor-cons.comp0235.condenser.arc.ucl.ac.uk"
+        grafana_user: "admin"
+        grafana_password: "admin"
+        validate_certs: false
+        state: present
+        commit_message: "Updated by Ansible"
+        overwrite: true
+        path: "templates/dashboard.json"

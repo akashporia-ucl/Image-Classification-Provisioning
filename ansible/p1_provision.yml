@@ -1,0 +1,131 @@
+# Playbook 1: System Preparation for AlmaLinux
+# This playbook performs the following:
+# 1. Updates all system packages to the latest version.
+# 2. Reboots the system to apply updates.
+# 3. Configures the locale and timezone.
+# 4. Provisions the system with essential tools, Python development packages, and Node.js.
+
+# Notify the user that Playbook 1 is starting
+- name: Notify user about Playbook 1
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 1: System Preparation for AlmaLinux - This will update packages, reboot the system, configure locale/timezone, and install essential tools, Python, and Node.js."
+
+# Task Group 1: Update AlmaLinux
+- name: Update AlmaLinux
+  hosts: all
+  become: true
+  become_user: root
+  tasks:
+    - name: Notify user about Task Group 1
+      ansible.builtin.debug:
+        msg: "Task Group 1: Updating all packages on AlmaLinux to the latest version."
+
+    - name: Update all packages to the latest version
+      ansible.builtin.dnf:
+        name: "*"  # Update all packages
+        state: latest  # Ensure all packages are at their latest version
+
+# Task Group 2: Post-update reboot
+- name: Post-update reboot
+  hosts: all
+  become: true
+  become_user: root
+  tasks:
+    - name: Notify user about Task Group 2
+      ansible.builtin.debug:
+        msg: "Task Group 2: Rebooting the system to apply updates."
+
+    - name: Reboot the server after package updates
+      ansible.builtin.reboot:  # Perform a reboot to apply updates
+
+# Task Group 3: Set up en-GB locale and time zone
+- name: Set up en-GB locale and timezone
+  hosts: all
+  become: true
+  become_user: root
+  tasks:
+    - name: Notify user about Task Group 3
+      ansible.builtin.debug:
+        msg: "Task Group 3: Configuring locale to en-GB and timezone to Europe/London."
+
+    - name: Install English localization
+      ansible.builtin.dnf:
+        name:
+          - glibc-langpack-en  # Install English language pack
+        state: latest
+
+    - name: Set en-GB localization
+      ansible.builtin.shell:
+        cmd: "localectl set-locale LANG=en_GB.UTF-8"  # Set the system locale to en-GB.UTF-8
+
+    - name: Set Europe/London timezone
+      ansible.builtin.shell:
+        cmd: "timedatectl set-timezone Europe/London"  # Set the system timezone to Europe/London
+
+# Task Group 4: Provision VMs with necessary tools
+- name: Provision VMs with essential tools and Python development packages
+  hosts: all
+  become: true
+  become_user: root
+  tasks:
+    - name: Notify user about Task Group 4
+      ansible.builtin.debug:
+        msg: "Task Group 4: Installing essential tools, Python, and Node.js."
+
+    - name: Update the DNF package cache
+      ansible.builtin.dnf:
+        update_cache: true  # Refresh the package metadata
+
+    - name: Install quality-of-life tools
+      ansible.builtin.dnf:
+        name:
+          - vim              # Text editor
+          - screen           # Terminal multiplexer
+          - tmux             # Terminal multiplexer
+          - net-tools        # Networking tools
+          - bind-utils       # DNS query tools
+          - htop             # Interactive process viewer
+          - git              # Version control system
+          - make             # Build automation tool
+          - unzip            # Unzip utility
+          - wget             # File downloader
+          - links            # Text-based web browser
+          - ansible          # Automation tool (Ansible itself)
+          - nano             # Lightweight text editor
+          - patch            # Patch management tool
+          - ufw              # Uncomplicated Firewall
+          - java-21-openjdk  # OpenJDK 21 for Java applications
+          - bzip2            # Compression utility
+          - glibc-langpack-en # English language pack
+        state: latest
+      retries: 3  # Retry the task up to 3 times on failure
+      delay: 5  # Wait 5 seconds between retries
+      register: tools_result
+
+    - name: Debug installation result
+      ansible.builtin.debug:
+        var: tools_result  # Display the result of the tool installation task
+
+    - name: Install Python3 and dev tools
+      ansible.builtin.dnf:
+        name:
+          - python3                 # Python 3 interpreter
+          - python3-pip             # Python package manager
+          - python3-devel           # Python development headers
+          - python3-virtualenv      # Python virtual environment tool
+          - g++                     # GNU C++ compiler
+          - gfortran                # GNU Fortran compiler
+          - openmpi-devel           # Development libraries for OpenMPI
+          - openmpi                 # OpenMPI runtime for parallel processing
+          - python3-mpi4py-openmpi  # MPI support for Python
+        state: latest  # Ensure all packages are at their latest version
+
+    - name: Install Node.js (latest supported version - 20.x)
+      ansible.builtin.shell:
+        cmd: |
+          curl -sL https://rpm.nodesource.com/setup_20.x | bash -  # Setup Node.js repository for version 20.x
+          dnf install -y nodejs  # Install Node.js
+        creates: /usr/bin/node  # Only run this if Node.js is not already installed

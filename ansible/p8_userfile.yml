@@ -1,0 +1,7 @@
+- name: Set up user config files
+  hosts: all
+  tasks: 
+  - name: ssh config
+    ansible.builtin.copy:
+      src: ./templates/ssh_config
+      dest: /home/almalinux/.ssh/config

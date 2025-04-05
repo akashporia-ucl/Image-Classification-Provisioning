@@ -1,0 +1,30 @@
+---
+- name: Launch React frontend and Python backend with screen (only after installs complete)
+  hosts: management
+  gather_facts: no
+  tasks:
+    - name: Install React dependencies
+      shell: npm install
+      args:
+        chdir: /home/almalinux/Image-Classification/frontend/my-app
+
+    - name: Start React frontend in screen
+      command: >
+        screen -S react_frontend -d -m bash -c
+        "cd /home/almalinux/Image-Classification/frontend/my-app &&
+         PORT=3501 npm start"
+      args:
+        chdir: /home/almalinux/Image-Classification/frontend/my-app
+
+    - name: Install Python dependencies
+      shell: pip install -r requirement.txt
+      args:
+        chdir: /home/almalinux/Image-Classification/backend
+
+    - name: Start Python backend in screen
+      command: >
+        screen -S python_backend -d -m bash -c
+        "cd /home/almalinux/Image-Classification/backend &&
+         python app.py"
+      args:
+        chdir: /home/almalinux/Image-Classification/backend

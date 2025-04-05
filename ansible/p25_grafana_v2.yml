@@ -1,0 +1,59 @@
+---
+- name: Retrieve Terraform username output and set fact
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Retrieve Terraform username output
+      delegate_to: localhost
+      run_once: true
+      command: terraform output -raw username
+      register: terraform_username
+      changed_when: false
+      args:
+        chdir: "{{ playbook_dir }}/../terraform"
+
+    - name: Set username fact from Terraform output
+      set_fact:
+        username: "{{ terraform_username.stdout }}"
+
+- name: Install and Configure Grafana
+  hosts: management
+  become: yes
+  vars:
+    # Ensure the username fact is available (it will be inherited if set in a previous play)
+    username: "{{ hostvars['localhost'].username }}"
+  tasks:
+    - name: Install Grafana
+      ansible.builtin.dnf:
+        name: grafana
+        state: present
+
+    - name: Configure Grafana Data Source
+      ansible.builtin.template:
+        src: "templates/grafana_datasource.yml.j2"
+        dest: /etc/grafana/provisioning/datasources/prometheus.yml
+        mode: '0644'
+
+    - name: Deploy Grafana dashboard provisioning configuration
+      ansible.builtin.template:
+        src: "templates/grafana_dashboard_provisioning.yml.j2"
+        dest: /etc/grafana/provisioning/dashboards/default.yml
+        mode: '0644'
+
+    - name: Create Grafana dashboards directory
+      ansible.builtin.file:
+        path: /var/lib/grafana/dashboards
+        state: directory
+        mode: '0755'
+
+    - name: Copy Grafana dashboard JSON file
+      ansible.builtin.copy:
+        src: "templates/dashboard.json"
+        dest: /var/lib/grafana/dashboards/dashboard.json
+        mode: '0644'
+
+    - name: Start Grafana
+      ansible.builtin.systemd:
+        name: grafana-server
+        enabled: true
+        state: started

@@ -1,0 +1,35 @@
+---
+# Playbook 18: Update .bashrc with SPARK_HOME and PATH
+# This playbook updates the .bashrc file for the 'almalinux' user on management and worker nodes
+# to include Spark environment variables (`SPARK_HOME` and `PATH`).
+
+- name: Notify user about Playbook 18
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 18: Update .bashrc with SPARK_HOME and PATH - This playbook updates the .bashrc file for Spark environment variables on management and worker nodes."
+
+- name: Update .bashrc with SPARK_HOME and PATH for management and worker nodes
+  hosts: management, workers
+  become: yes
+  tasks:
+    # Step 1: Ensure Spark environment variables are in .bashrc
+    - name: Ensure the Spark environment variables are in .bashrc
+      # Add `SPARK_HOME` and `PATH` variables to the user's `.bashrc` file if not already present.
+      ansible.builtin.lineinfile:
+        path: "/home/almalinux/.bashrc"  # Explicitly point to the correct user's .bashrc file
+        line: "{{ item }}"  # The line to add to .bashrc
+        state: present  # Ensure the line is present in the file
+      loop:
+        - "export SPARK_HOME=/home/almalinux/spark-3.5.3-bin-hadoop3-scala2.13"
+        - "export PATH=$SPARK_HOME/bin:$PATH"
+      become_user: almalinux  # Run the task as the 'almalinux' user
+
+    # Step 2: Source the updated .bashrc
+    - name: Source the updated .bashrc
+      # Source the updated `.bashrc` file to apply the changes for the current session.
+      ansible.builtin.shell: source /home/almalinux/.bashrc
+      args:
+        executable: /bin/bash
+      become_user: almalinux  # Source the file as the 'almalinux' user

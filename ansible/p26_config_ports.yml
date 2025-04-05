@@ -1,0 +1,88 @@
+---
+# Playbook 16: Configure UFW Rules on Management Node
+# This playbook ensures UFW is installed, enables it, and configures rules to allow specific ports for services
+# such as Prometheus, Grafana, and Spark.
+
+- name: Notify user about Playbook 16
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 16: Configure UFW Rules on Management Node - This playbook installs and enables UFW, then configures rules to allow required ports."
+
+- name: Configure UFW rules on management node
+  hosts: management
+  become_user: root
+  become: yes
+  tasks:
+    # Step 1: Ensure UFW is installed
+    - name: Ensure UFW is installed
+      # Install the UFW (Uncomplicated Firewall) package if it is not already present.
+      ansible.builtin.yum:
+        name:
+          - ufw
+        state: present
+
+    # Step 2: Enable UFW
+    - name: Enable UFW
+      # Enable UFW to enforce the firewall rules. The `echo "y" | ufw enable` accepts the prompt automatically.
+      ansible.builtin.shell:
+        cmd: echo "y" | ufw enable
+        executable: /bin/bash
+
+    # Step 3: Allow required ports for services
+    - name: Allow port 9090
+      # Allow inbound traffic on port 9090 (used by Prometheus).
+      ansible.builtin.shell:
+        cmd: ufw allow 9090
+        executable: /bin/bash
+
+    - name: Allow port 9100
+      # Allow inbound traffic on port 9100 (used by Node Exporter).
+      ansible.builtin.shell:
+        cmd: ufw allow 9100
+        executable: /bin/bash
+
+    - name: Allow port 3000
+      # Allow inbound traffic on port 3000 (used by Grafana).
+      ansible.builtin.shell:
+        cmd: ufw allow 3000
+        executable: /bin/bash
+
+    - name: Allow port 8080
+      # Allow inbound traffic on port 8080 (used by Spark or other services).
+      ansible.builtin.shell:
+        cmd: ufw allow 8080
+        executable: /bin/bash
+
+- name: Configure UFW rules on worker nodes
+  hosts: workers
+  become_user: root
+  become: yes
+  tasks:
+    # Step 1: Ensure UFW is installed
+    - name: Ensure UFW is installed
+      # Install the UFW (Uncomplicated Firewall) package if it is not already present.
+      ansible.builtin.yum:
+        name:
+          - ufw
+        state: present
+
+    # Step 2: Enable UFW
+    - name: Enable UFW
+      # Enable UFW to enforce the firewall rules. The `echo "y" | ufw enable` accepts the prompt automatically.
+      ansible.builtin.shell:
+        cmd: echo "y" | ufw enable
+        executable: /bin/bash
+
+    - name: Allow port 9100
+      # Allow inbound traffic on port 9100 (used by Node Exporter).
+      ansible.builtin.shell:
+        cmd: ufw allow 9100
+        executable: /bin/bash
+
+    - name: Allow port 8081
+      # Allow inbound traffic on port 8080 (used by Spark or other services).
+      ansible.builtin.shell:
+        cmd: ufw allow 8081
+        executable: /bin/bash

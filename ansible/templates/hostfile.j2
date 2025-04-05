@@ -1,0 +1,6 @@
+{% for node in groups["workers"] %}
+{{ node }} workernode{{ loop.index }}
+{% endfor %}
+{% for node in groups["management"] %}
+{{ node }} mgmtnode
+{% endfor %}

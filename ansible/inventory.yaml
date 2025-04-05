@@ -1,0 +1,12 @@
+all:
+  children:
+    management:
+      hosts:
+        10.134.12.251: {}
+    storage:
+      hosts: {}
+    workers:
+      hosts:
+        10.134.12.180: {}
+        10.134.12.222: {}
+        10.134.12.252: {}

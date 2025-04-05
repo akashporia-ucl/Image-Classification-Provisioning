@@ -1,0 +1,56 @@
+- name: Manage dataset in HDFS via a worker node (idempotent)
+  hosts: workers[0]
+  become: yes
+  become_user: almalinux
+  become_flags: '-E'
+  run_once: true
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/home/almalinux/hadoop-3.4.0/bin"
+    HADOOP_CONF_DIR: /home/almalinux/hadoop-3.4.0/etc/hadoop
+    JAVA_HOME: "/usr/lib/jvm/java"  # Adjust if needed
+  tasks:
+    - name: Create dataset folder in HDFS
+      ansible.builtin.shell: hdfs dfs -mkdir -p /data
+      register: hdfs_mkdir
+      ignore_errors: yes
+
+    - name: Download dataset from Kaggle if not already present
+      get_url:
+        url: "https://www.kaggle.com/api/v1/datasets/download/alessandrasala79/ai-vs-human-generated-dataset"
+        dest: /home/almalinux/ai-vs-human-generated-dataset.zip
+        mode: '0644'
+
+    - name: Unarchive the dataset
+      unarchive:
+        src: /home/almalinux/ai-vs-human-generated-dataset.zip
+        dest: /home/almalinux/
+        remote_src: yes
+
+    - name: Create HDFS directory /data
+      ansible.builtin.shell: hdfs dfs -mkdir -p /data
+      register: hdfs_mkdir
+      ignore_errors: yes
+
+    - name: Check if dataset folder exists in HDFS
+      ansible.builtin.shell: >
+        hdfs dfs -test -d /data &&
+        echo "exists" || echo "not"
+      register: hdfs_dataset_check
+      changed_when: false
+
+    - name: Debug HDFS dataset check result
+      ansible.builtin.debug:
+        msg: "Dataset folder exists in HDFS: {{ hdfs_dataset_check.stdout }}"
+
+    - name: Put test.csv into HDFS /data
+      ansible.builtin.shell: "hdfs dfs -put -f /home/almalinux/test.csv /data"
+
+    - name: Put train.csv into HDFS /data
+      ansible.builtin.shell: "hdfs dfs -put -f /home/almalinux/train.csv /data"
+
+    - name: Put train_data directory into HDFS /data with block size 512m
+      ansible.builtin.shell: "hdfs dfs -D dfs.block.size=512m -put -f /home/almalinux/train_data/ /data"
+
+
+    - name: Put test_data_v2 directory into HDFS /data with block size 512m
+      ansible.builtin.shell: "hdfs dfs -D dfs.block.size=512m -put -f /home/almalinux/test_data_v2/ /data"

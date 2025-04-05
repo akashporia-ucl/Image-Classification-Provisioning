@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'management'
+    static_configs:
+      - targets:
+          {% for host in groups['management'] %}
+          - "{{ host }}:9100"
+          {% endfor %}
+
+  - job_name: 'workers'
+    static_configs:
+      - targets:
+          {% for host in groups['workers'] %}
+          - "{{ host }}:9100"
+          {% endfor %}
+
+  - job_name: 'spark'
+    static_configs:
+      - targets:
+          {% for host in groups.get('spark', []) %}
+          - "{{ host }}:8080"
+          {% endfor %}
+
+rule_files:
+  - /etc/prometheus/alert_rules.yml

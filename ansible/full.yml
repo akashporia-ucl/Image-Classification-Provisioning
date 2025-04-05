@@ -1,0 +1,33 @@
+- name: Run all required playbooks in sequence to run pipeline
+  hosts: localhost
+  gather_facts: no
+  tasks: []
+
+- import_playbook: p1_provision.yml
+- import_playbook: p2_assign_hostnames.yml
+- import_playbook: p4_customise.yml
+- import_playbook: p5_configure_mgmt_nodes.yml
+- import_playbook: p6_commonkeys.yml
+- import_playbook: p7_sharekeys.yml
+- import_playbook: p8_userfile.yml
+- import_playbook: p9_firewall.yml
+- import_playbook: p10_install_hadoop_v2.yml
+- import_playbook: p11_config_mgmt_v2.yml
+- import_playbook: p12_config_worker_v2.yml
+- import_playbook: p13_hadoop_v3.yml
+- import_playbook: p14_install_spark.yml
+- import_playbook: p15_spark_path.yml
+- import_playbook: p16_firewall_spark.yml
+- import_playbook: p17_start_spark_master.yml
+- import_playbook: p18_start_spark_worker.yml
+- import_playbook: p19_install_dep.yml
+- import_playbook: p21_prometheus.yml
+- import_playbook: p22_node_exporter.yml
+- import_playbook: p23_config_prometheus.yml
+- import_playbook: p24_spark_metrics.yml
+- import_playbook: p25_grafana_v2.yml
+- import_playbook: p26_config_ports.yml
+- import_playbook: p27_custom_dashboard_v2.yml
+- import_playbook: p28_setup_env.yml
+- import_playbook: p29_start_app.yml
+- import_playbook: p20_dataset_v2.yml

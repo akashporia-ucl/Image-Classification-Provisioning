@@ -1,0 +1,18 @@
+#cloud-config
+packages:
+  - git
+  - ansible
+
+bootcmd:
+  - [ dnf, config-manager, --set-enabled, crb ]
+  - [ dnf, install, -y, epel-release ]
+
+ssh_authorized_keys:
+  - ${public_key_openssh}    # Public key from your ansible_key
+  - ${lecturer_key}          # Public key from lecturer_key.pub
+
+runcmd:
+  - echo "Cloning repository..."
+  - git clone https://github.com/akashporia-ucl/Image-Classification /home/almalinux/Image-Classification
+  - echo "Running ansible-pull to configure the node..."
+  - sudo chmod 777 -R /home/almalinux/Image-Classification

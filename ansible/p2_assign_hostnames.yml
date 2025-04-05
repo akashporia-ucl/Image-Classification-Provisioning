@@ -1,0 +1,67 @@
+---
+# Playbook 2: Configure Hostnames for All Servers
+# This playbook dynamically configures hostnames for all servers based on their groups and IP addresses.
+# It ensures that `/etc/hosts` and `/etc/hostname` are correctly updated with the new hostnames.
+
+- name: Notify user about Playbook 2
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 2: Configure Hostnames for All Servers - This playbook sets up hostnames dynamically for all servers."
+
+- name: Configure hostnames for all servers
+  hosts: all
+  become: true
+
+  vars:
+    temp_hosts: |
+      {% set host_list = [] %}
+      {% for group, hosts in groups.items() %}
+      {% for host in hosts %}
+      {% if groups[group] | length == 1 %}
+      {{ host_list.append({'ip': hostvars[host].ansible_host | default(host), 'hostname': group}) }}
+      {% else %}
+      {{ host_list.append({'ip': hostvars[host].ansible_host | default(host), 'hostname': group[:-1] + loop.index|string }) }}
+      {% endif %}
+      {% endfor %}
+      {% endfor %}
+      {{ host_list }}
+
+  tasks:
+    - name: Generate dynamic host entries
+      # Generates a list of host entries with IP and hostname based on the group and inventory data.
+      set_fact:
+        host_entries: "{{ temp_hosts | from_yaml }}"
+
+    - name: Remove all existing custom entries from /etc/hosts
+      # Removes any existing custom entries in `/etc/hosts` that match the IP address pattern.
+      lineinfile:
+        path: /etc/hosts
+        regexp: "^10\\.134\\..*"  # Matches entries starting with 10.134.
+        state: absent
+
+    - name: Ensure correct entries in /etc/hosts
+      # Adds the dynamically generated IP and hostname entries to `/etc/hosts`.
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ item.ip }} {{ item.hostname }}"
+        state: present
+      loop: "{{ host_entries }}"
+      when: item.hostname not in ['al1', 'al2', 'al3', 'al4', 'al5']  # Skips specific hostnames.
+
+    - name: Set hostname for the current machine
+      # Sets the hostname for the current machine based on the dynamically generated hostname.
+      hostname:
+        name: "{{ item.hostname }}"
+      loop: "{{ host_entries }}"
+      when: inventory_hostname == item.ip or inventory_hostname in [item.ip]
+
+    - name: Ensure hostname is updated in /etc/hostname
+      # Ensures the updated hostname is written to `/etc/hostname`.
+      lineinfile:
+        path: /etc/hostname
+        line: "{{ item.hostname }}"
+        state: present
+      loop: "{{ host_entries }}"
+      when: inventory_hostname == item.ip or inventory_hostname in [item.ip]

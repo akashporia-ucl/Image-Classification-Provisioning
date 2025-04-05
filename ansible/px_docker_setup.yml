@@ -1,0 +1,40 @@
+---
+- name: Setup Docker Environment using ds4eng-infra approach
+  hosts: all
+  become: true
+  vars:
+    docker_repo_url: "https://download.docker.com/linux/centos/docker-ce.repo"
+    docker_packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+  tasks:
+    - name: Install dnf-plugins-core for repository management
+      dnf:
+        name: dnf-plugins-core
+        state: present
+
+    - name: Add Docker CE repository
+      command: dnf config-manager --add-repo {{ docker_repo_url }}
+      args:
+        creates: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install Docker packages
+      dnf:
+        name: "{{ docker_packages }}"
+        state: latest
+
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Verify Docker installation by checking version
+      command: docker --version
+      register: docker_version
+      changed_when: false
+
+    - name: Display Docker version
+      debug:
+        msg: "Docker version: {{ docker_version.stdout }}"

@@ -1,0 +1,57 @@
+---
+# Playbook 11: Install Prometheus on Management Node
+# This playbook installs Prometheus and its Node Exporter on the management node, configures Prometheus,
+# and ensures the service is started and enabled.
+
+- name: Notify user about Playbook 11
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 11: Install Prometheus on Management Node - This playbook installs Prometheus, configures it, and starts the Prometheus service."
+
+- name: Install Prometheus on Management Node
+  hosts: management
+  become: yes
+  tasks:
+    # Step 1: Install required packages
+    - name: Install required packages
+      # Install Go and EPEL repository, which are prerequisites for Prometheus.
+      ansible.builtin.dnf:
+        name:
+          - golang
+          - epel-release
+        state: present
+
+    # Step 2: Import the EPEL GPG key
+    - name: Import EPEL GPG key
+      # Import the GPG key for the EPEL repository to ensure package integrity.
+      ansible.builtin.rpm_key:
+        state: present
+        key: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-9
+
+    # Step 3: Install Prometheus and Node Exporter
+    - name: Install Prometheus
+      # Install Prometheus and Node Exporter packages from the repository.
+      ansible.builtin.dnf:
+        name:
+          - golang-github-prometheus
+          - golang-github-prometheus-node-exporter
+        state: present
+        disable_gpg_check: true  # Disable GPG check for simplicity (consider enabling in production).
+
+    # Step 4: Configure Prometheus
+    - name: Configure Prometheus
+      # Deploy the Prometheus configuration file from a template.
+      ansible.builtin.template:
+        src: "templates/prometheus.yml.j2"  # Dynamic path to the template file.
+        dest: /etc/prometheus/prometheus.yml
+        mode: '0644'
+
+    # Step 5: Start and enable Prometheus service
+    - name: Start Prometheus
+      # Start the Prometheus service and enable it to start on boot.
+      ansible.builtin.systemd:
+        name: prometheus
+        enabled: true
+        state: started

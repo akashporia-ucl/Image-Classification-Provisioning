@@ -1,0 +1,44 @@
+- name: Install and Configure Grafana
+  hosts: management
+  become: yes
+  tasks:
+    # Step 1: Install Grafana
+    - name: Install Grafana
+      ansible.builtin.dnf:
+        name: grafana
+        state: present
+
+    # Step 2: Configure Grafana Data Source
+    - name: Configure Grafana Data Source
+      ansible.builtin.template:
+        src: "templates/grafana_datasource.yml.j2"
+        dest: /etc/grafana/provisioning/datasources/prometheus.yml
+        mode: '0644'
+
+    # New Step: Deploy Dashboard Provisioning Configuration
+    - name: Deploy Grafana dashboard provisioning configuration
+      ansible.builtin.template:
+        src: "templates/grafana_dashboard_provisioning.yml.j2"
+        dest: /etc/grafana/provisioning/dashboards/default.yml
+        mode: '0644'
+
+    # Create the destination directory for dashboards
+    - name: Create Grafana dashboards directory
+      ansible.builtin.file:
+        path: /var/lib/grafana/dashboards
+        state: directory
+        mode: '0755'
+
+    # New Step: Copy dashboard JSON file
+    - name: Copy Grafana dashboard JSON file
+      ansible.builtin.copy:
+        src: "templates/dashboard.json"  # Adjust path if necessary
+        dest: /var/lib/grafana/dashboards/dashboard.json
+        mode: '0644'
+
+    # Step 3: Start Grafana Service
+    - name: Start Grafana
+      ansible.builtin.systemd:
+        name: grafana-server
+        enabled: true
+        state: started

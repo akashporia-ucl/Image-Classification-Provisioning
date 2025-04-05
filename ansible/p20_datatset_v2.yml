@@ -1,0 +1,76 @@
+- name: Manage dataset in HDFS via a worker node (idempotent)
+  hosts: workers[0]
+  become: yes
+  become_user: almalinux
+  become_flags: '-E'
+  run_once: true
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/home/almalinux/hadoop-3.4.0/bin"
+  tasks:
+    - name: Create dataset folder in HDFS
+      ansible.builtin.shell: hdfs dfs -mkdir -p /data/ai-vs-human-generated-dataset
+      register: hdfs_mkdir
+      ignore_errors: yes
+
+    - name: Check if dataset folder exists in HDFS
+      ansible.builtin.shell: >
+        hdfs dfs -test -d /data/ai-vs-human-generated-dataset &&
+        echo "exists" || echo "not"
+      register: hdfs_dataset_check
+      changed_when: false
+
+    - name: Debug HDFS dataset check result
+      ansible.builtin.debug:
+        msg: "Dataset folder exists in HDFS: {{ hdfs_dataset_check.stdout }}"
+
+    - name: Check for image files in HDFS dataset folder
+      ansible.builtin.shell: >
+        hdfs dfs -ls /data/ai-vs-human-generated-dataset | grep -E '\.jpg|\.png|\.jpeg' &&
+        echo "images_exist" || echo "images_missing"
+      register: hdfs_images_check
+      changed_when: false
+      when: "'exists' in hdfs_dataset_check.stdout"
+
+    - name: Set flag to update dataset (if folder missing or images missing)
+      ansible.builtin.set_fact:
+        update_dataset: "{{ ('not' in hdfs_dataset_check.stdout) or ((hdfs_images_check.stdout is defined) and (hdfs_images_check.stdout == 'images_missing')) }}"
+
+    - name: Debug update_dataset flag
+      ansible.builtin.debug:
+        msg: "update_dataset flag is {{ update_dataset }}"
+
+    - name: Download dataset ZIP from Kaggle (if update_dataset is true)
+      ansible.builtin.get_url:
+        url: "https://www.kaggle.com/api/v1/datasets/download/alessandrasala79/ai-vs-human-generated-dataset"
+        dest: "/tmp/ai-vs-human-generated-dataset.zip"
+        timeout: 300
+      when: update_dataset
+
+    - name: Ensure /tmp/dataset directory exists (for extraction)
+      ansible.builtin.file:
+        path: /tmp/dataset
+        state: directory
+      when: update_dataset
+
+    - name: Unzip dataset into /tmp/dataset directory
+      ansible.builtin.unarchive:
+        src: "/tmp/ai-vs-human-generated-dataset.zip"
+        dest: "/tmp/dataset"
+        remote_src: yes
+      when: update_dataset
+
+    - name: Upload dataset directory to HDFS
+      ansible.builtin.shell: "hadoop distcp -m 10 file:///tmp/dataset hdfs:///data/ai-vs-human-generated-dataset"
+      when: update_dataset
+
+    - name: Remove downloaded dataset ZIP file
+      ansible.builtin.file:
+        path: "/tmp/ai-vs-human-generated-dataset.zip"
+        state: absent
+      when: update_dataset
+
+    - name: Remove temporary extracted dataset directory
+      ansible.builtin.file:
+        path: "/tmp/dataset"
+        state: absent
+      when: update_dataset

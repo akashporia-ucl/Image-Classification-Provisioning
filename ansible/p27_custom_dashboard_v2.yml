@@ -1,0 +1,27 @@
+- hosts: localhost
+  gather_facts: false
+  tasks:
+
+    - name: Retrieve Terraform username output
+      command: terraform output -raw username
+      register: terraform_username
+      changed_when: false
+      args:
+        # This walks one directory "up" from the playbook location,
+        # then enters terraform/:
+        chdir: "{{ playbook_dir }}/../terraform"
+
+    - name: Debug Terraform username value
+      debug:
+        msg: "Terraform username is {{ terraform_username.stdout }}"
+    
+    - name: Import Grafana dashboard using basic auth
+      community.grafana.grafana_dashboard:
+        grafana_url: "https://grafana-{{ terraform_username.stdout }}.comp0235.condenser.arc.ucl.ac.uk"
+        grafana_user: "admin"
+        grafana_password: "admin"
+        validate_certs: false
+        state: present
+        commit_message: "Updated by Ansible"
+        overwrite: true
+        path: "templates/dashboard.json" 
