@@ -34,3 +34,5 @@
         ufw allow 8081    # Worker Web UI
         ufw allow 3501
         ufw allow 3500
+        ufw allow 8082
+        ufw allow 7777

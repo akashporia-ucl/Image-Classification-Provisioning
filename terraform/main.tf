@@ -147,8 +147,14 @@ resource "harvester_virtualmachine" "worker" {
     condenser_ingress_isAllowed = true
     condenser_ingress_nodeexporter_hostname = "nodeexporter-worker-${count.index + 1}-${var.username}"
     condenser_ingress_nodeexporter_port   = 9100
-    condenser_ingress_spark_hostname = "spark-worker-${count.index + 1}-${var.username}"
+    condenser_ingress_spark_hostname = "spark-${count.index + 1}-${var.username}"
     condenser_ingress_spark_port   = 8081
+    condenser_ingress_spark_worker_hostname = "spark-worker-${count.index + 1}-${var.username}"
+    condenser_ingress_spark_worker_port   = 8082
+    condenser_ingress_airflow_hostname = "airflow-worker-${count.index + 1}-${var.username}"
+    condenser_ingress_airflow_port   = 7777
+    condenser_ingress_rabbitmq_hostname = "rabbitmq-worker-${count.index + 1}-${var.username}"
+    condenser_ingress_rabbitmq_port   = 15672
   }
 }
 

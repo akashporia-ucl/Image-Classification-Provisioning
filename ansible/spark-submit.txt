@@ -1,0 +1,7 @@
+spark-submit \
+  --master spark://management:7077 \
+  --deploy-mode client \
+  --conf spark.executor.instances=4 \
+  --conf spark.executor.cores=2 \
+  --conf spark.executor.memory=4G \
+  tm.py

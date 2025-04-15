@@ -28,6 +28,10 @@
 - import_playbook: p25_grafana_v2.yml
 - import_playbook: p26_config_ports.yml
 - import_playbook: p27_custom_dashboard_v2.yml
+- import_playbook: p30_remove_unwanted.yml
 - import_playbook: p28_setup_env.yml
+- import_playbook: px_install_rbmq.yml
+- import_playbook: px_airflow.yml
 - import_playbook: p29_start_app.yml
+- import_playbook: px_start_consumer_in_worker.yml
 - import_playbook: p20_dataset_v2.yml

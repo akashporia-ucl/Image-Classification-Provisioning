@@ -1,5 +1,5 @@
 - name: Install required Python packages on Spark workers
-  hosts: all
+  hosts: workers
   become: yes
   tasks:
     - name: Ensure python3 and pip3 are installed on Debian/Ubuntu
@@ -31,8 +31,15 @@
           - numpy
           - pandas
           - "pyspark>=3.0.0"
+          - pillow
+          - torch
+          - torchvision
+          - pika
+          - scikit-learn
+          - hdfs3
+          - fsspec[hdfs]
         executable: pip3
-        extra_args: "--no-cache-dir"
+        extra_args: "--no-cache-dir --ignore-installed"
 
     - name: Remove Hadoop and Spark archives if they exist
       file:

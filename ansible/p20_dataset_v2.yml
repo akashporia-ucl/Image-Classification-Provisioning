@@ -54,3 +54,14 @@
 
     - name: Put test_data_v2 directory into HDFS /data with block size 512m
       ansible.builtin.shell: "hdfs dfs -D dfs.block.size=512m -put -f /home/almalinux/test_data_v2/ /data"
+
+    - name: Remove dataset files and folders from /home/almalinux
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /home/almalinux/ai-vs-human-generated-dataset.zip
+        - /home/almalinux/test.csv
+        - /home/almalinux/train.csv
+        - /home/almalinux/train_data
+        - /home/almalinux/test_data_v2
