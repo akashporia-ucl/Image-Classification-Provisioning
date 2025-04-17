@@ -34,13 +34,14 @@
 
     - name: Initialize the Airflow database
       shell: |
+        cd /home/almalinux/Image-Classification-Model-Tuning && \
         source py_env/bin/activate && airflow db init
       args:
         chdir: /home/almalinux/Image-Classification-Model-Tuning
 
     - name: Create Airflow admin user
       expect:
-        command: "bash -c 'source py_env/bin/activate && airflow users create --username admin --firstname firstname --lastname lastname --role Admin --email admin@airflow.com'"
+        command: "bash -c 'cd /home/almalinux/Image-Classification-Model-Tuning && source py_env/bin/activate && airflow users create --username admin --firstname firstname --lastname lastname --role Admin --email admin@airflow.com'"
         responses:
           "Password:": "admin"
           "Repeat for confirmation:": "admin"
@@ -55,6 +56,7 @@
 
     - name: Install graphviz via pip
       shell: |
+        cd /home/almalinux/Image-Classification-Model-Tuning && \
         source py_env/bin/activate
         pip install graphviz
       args:
@@ -62,6 +64,7 @@
 
     - name: Remove existing logs directory
       shell: |
+        cd /home/almalinux/Image-Classification-Model-Tuning && \
         source py_env/bin/activate
         rm -rf dags/logs
       args:
@@ -69,6 +72,7 @@
 
     - name: Give execute permissions to the DAG file
       shell: |
+        cd /home/almalinux/Image-Classification-Model-Tuning && \
         source py_env/bin/activate
         chmod +x dags/ai_vs_human_classification_dag.py
       args:
@@ -76,13 +80,13 @@
 
     - name: Start Airflow webserver in a detached screen session
       command: >
-        screen -S airflow_webserver -d -m bash -c "source py_env/bin/activate && airflow webserver -p 7777"
+        screen -S airflow_webserver -d -m bash -c "cd /home/almalinux/Image-Classification-Model-Tuning && source py_env/bin/activate && airflow webserver -p 7777"
       args:
         chdir: /home/almalinux/Image-Classification-Model-Tuning
 
     - name: Start Airflow scheduler in a screen session
       command: >
-        screen -S airflow_scheduler -d -m bash -c "source py_env/bin/activate && airflow scheduler"
+        screen -S airflow_scheduler -d -m bash -c "cd /home/almalinux/Image-Classification-Model-Tuning && source py_env/bin/activate && airflow scheduler"
       args:
         chdir: /home/almalinux/Image-Classification-Model-Tuning
 

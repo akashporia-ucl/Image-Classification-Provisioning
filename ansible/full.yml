@@ -33,5 +33,4 @@
 - import_playbook: px_install_rbmq.yml
 - import_playbook: px_airflow.yml
 - import_playbook: p29_start_app.yml
-- import_playbook: px_start_consumer_in_worker.yml
 - import_playbook: p20_dataset_v2.yml

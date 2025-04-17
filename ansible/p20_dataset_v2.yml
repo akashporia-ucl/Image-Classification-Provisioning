@@ -38,6 +38,11 @@
       register: hdfs_dataset_check
       changed_when: false
 
+    - name: Create HDFS directory /data/images
+      ansible.builtin.shell: hdfs dfs -mkdir -p /data/images
+      register: hdfs_mkdir
+      ignore_errors: yes
+
     - name: Debug HDFS dataset check result
       ansible.builtin.debug:
         msg: "Dataset folder exists in HDFS: {{ hdfs_dataset_check.stdout }}"

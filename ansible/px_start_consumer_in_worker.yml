@@ -1,12 +1,11 @@
 ---
 - name: Launch React frontend and Python backend with screen (only after installs complete)
   hosts: workers[0]
-  gather_facts: no
+  become: yes
+  become_user: root
   tasks:
     - name: Start Python consumer in screen
       command: >
-        screen -S consumer -d -m bash -c
-        "cd /home/almalinux/Image-Classification-Model-Tuning &&
-         python request.py"
+        screen -S consumer -d -m bash -c "cd /home/almalinux/Image-Classification-Model-Tuning && python request.py"
       args:
-        chdir: /home/almalinux/Image-Classification/backend
+        chdir: /home/almalinux/Image-Classification-Model-Tuning
