@@ -203,3 +203,16 @@ To install these tools:
 
 
 ## Sample ETL run via Airflow
+
+- Step 1: Login to Airflow
+- Step 2: Open admin variables
+
+![image alt](https://github.com/akashporia-ucl/Image-Classification-Provisioning/blob/f0ff41af56a8d4dc89c7f04945851031580304d0/Screenshot%202025-04-28%20at%2014.52.51%20(2).png)
+
+- Step 3: Update airflow variables and save
+![image alt](https://github.com/akashporia-ucl/Image-Classification-Provisioning/blob/f0ff41af56a8d4dc89c7f04945851031580304d0/Screenshot%202025-04-28%20at%2015.03.21.png)
+
+- Step 4: Trigger new DAG run
+![image alt](https://github.com/akashporia-ucl/Image-Classification-Provisioning/blob/f0ff41af56a8d4dc89c7f04945851031580304d0/Screenshot%202025-04-28%20at%2015.07.53.png)
+
+- Step 5: Monitor run (~approx 10-15 minutes for entire DAG run)
