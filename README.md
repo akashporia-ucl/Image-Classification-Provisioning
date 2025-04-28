@@ -216,3 +216,26 @@ To install these tools:
 ![image alt](https://github.com/akashporia-ucl/Image-Classification-Provisioning/blob/f0ff41af56a8d4dc89c7f04945851031580304d0/Screenshot%202025-04-28%20at%2015.07.53.png)
 
 - Step 5: Monitor run (~approx 10-15 minutes for entire DAG run)
+
+## Web-APP walk through
+
+- Step 1: Open the URL
+- Step 2: Click on "Try Now"
+
+![image alt](https://github.com/akashporia-ucl/Image-Classification-Provisioning/blob/e896ae307ca8a45de70b012d7b877c4c5191bdfc/Screenshot%202025-04-28%20at%2015.26.45.png)
+
+- Step 3: Sign in using credentials
+
+![image alt](https://github.com/akashporia-ucl/Image-Classification-Provisioning/blob/e896ae307ca8a45de70b012d7b877c4c5191bdfc/Screenshot%202025-04-28%20at%2015.26.57.png)
+
+- Step 4: Upload an image and click classify
+ 
+![image alt](https://github.com/akashporia-ucl/Image-Classification-Provisioning/blob/e896ae307ca8a45de70b012d7b877c4c5191bdfc/Screenshot%202025-04-28%20at%2015.27.50.png)
+
+- Step 5: Classification result displayed
+ 
+![image alt](https://github.com/akashporia-ucl/Image-Classification-Provisioning/blob/e896ae307ca8a45de70b012d7b877c4c5191bdfc/Screenshot%202025-04-28%20at%2015.28.02.png)
+
+- Step 6: To view statistics on train and test data click "View Statistics" button
+ 
+![image alt](https://github.com/akashporia-ucl/Image-Classification-Provisioning/blob/e896ae307ca8a45de70b012d7b877c4c5191bdfc/Screenshot%202025-04-28%20at%2015.28.14.png)
