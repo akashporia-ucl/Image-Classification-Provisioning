@@ -5,3 +5,7 @@ terraform/terraform.tfstate.backup
 
 ansible/.generated
 ansible/.sparkpass
+
+terraform.tfstate
+
+utils

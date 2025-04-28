@@ -19,3 +19,6 @@ runcmd:
 
   - git clone https://github.com/akashporia-ucl/Image-Classification-Model-Tuning /home/almalinux/Image-Classification-Model-Tuning
   - sudo chmod 777 -R /home/almalinux/Image-Classification-Model-Tuning
+
+  - git clone https://github.com/akashporia-ucl/Image-Classification-Sample-Data /home/almalinux/Image-Classification-Sample-Data
+  - sudo chmod 777 -R /home/almalinux/Image-Classification-Sample-Data

@@ -65,12 +65,6 @@ resource "harvester_virtualmachine" "mgmtvm" {
   tags = {
     role                           = "management"
     description                    = "Management_node_for_coordinating_the_environment"
-    storage_access_hostname        = "${var.username}-s3"
-    storage_access_port            = 9000
-    storage_access_protocol        = "https"
-    storage_console_hostname       = "${var.username}-cons"
-    storage_console_port           = 9001
-    storage_console_protocol       = "https"
     condenser_ingress_prometheus_hostname = "prometheus-${var.username}"
     condenser_ingress_prometheus_port     = 9090
     condenser_ingress_nodeexporter_hostname = "nodeexporter-${var.username}"
@@ -83,6 +77,8 @@ resource "harvester_virtualmachine" "mgmtvm" {
     condenser_ingress_react_port = 3501
     condenser_ingress_flask_hostname = "flask-${var.username}"
     condenser_ingress_flask_port = 3500
+    condenser_ingress_hadoop_hostname = "hadoop-${var.username}"
+    condenser_ingress_hadoop_port = 9000
     condenser_ingress_isEnabled           = true
     condenser_ingress_isAllowed           = true
   }
@@ -137,12 +133,6 @@ resource "harvester_virtualmachine" "worker" {
   tags = {
     role                        = "worker"
     description                 = "Worker_node_for_compute_tasks_connected_to_storage"
-    storage_access_hostname     = "${var.username}-s3"
-    storage_access_port         = 9000
-    storage_access_protocol     = "https"
-    storage_console_hostname    = "${var.username}-cons"
-    storage_console_port        = 9001
-    storage_console_protocol    = "https"
     condenser_ingress_isEnabled = true
     condenser_ingress_isAllowed = true
     condenser_ingress_nodeexporter_hostname = "nodeexporter-worker-${count.index + 1}-${var.username}"
@@ -155,6 +145,8 @@ resource "harvester_virtualmachine" "worker" {
     condenser_ingress_airflow_port   = 7777
     condenser_ingress_rabbitmq_hostname = "rabbitmq-worker-${count.index + 1}-${var.username}"
     condenser_ingress_rabbitmq_port   = 15672
+    condenser_ingress_hadoop_hostname = "hadoop-worker-${count.index + 1}-${var.username}"
+    condenser_ingress_hadoop_port   = 9000
   }
 }
 
