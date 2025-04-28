@@ -1,0 +1,37 @@
+# Playbook 3: Customise VMs for course
+# This playbook performs the following:
+# 1. Generates a customised hosts file on each VM from a Jinja2 template.
+# 2. Creates Hadoop temporary and HDFS directories with the correct ownership and permissions.
+
+- name: Notify user about Playbook 3
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 3: Customise VMs for course - This will create hosts files and configure Hadoop directories on each VM."
+
+
+- name: Customise VMs for course
+  hosts: all
+  become: true
+  become_user: root
+  tasks: 
+    - name: Create hosts file from template
+      ansible.builtin.blockinfile:
+        block: "{{ lookup('template', 'templates/hostfile.j2') }}"
+        dest: /etc/hosts
+        insertafter: EOF
+
+    - name: Add hadoop tmp directory
+      ansible.builtin.file:
+        path: /opt/hadoop_tmp
+        owner: almalinux
+        group: almalinux
+        state: directory
+
+    - name: Add hdfs directory
+      ansible.builtin.file:
+        path: /opt/hadoop_tmp/hdfs
+        owner: almalinux
+        group: almalinux
+        state: directory

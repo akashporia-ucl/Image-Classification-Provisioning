@@ -14,365 +14,367 @@
   },
   "editable": true,
   "gnetId": null,
-  "graphTooltip": 0,
-  "id": null,
-  "iteration": 1672531200000,
+  "graphTooltip": null,
   "links": [],
   "panels": [
     {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {},
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "id": 1,
-      "options": {
-        "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
-      },
-      "targets": [
-        {
-          "expr": "100 - (avg by(instance)(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
-          "format": "time_series",
-          "legendFormat": "{{instance}}",
-          "refId": "A"
-        }
-      ],
+      "type": "timeseries",
       "title": "CPU Usage (%)",
-      "type": "timeseries"
-    },
-    {
       "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "fieldConfig": {
         "defaults": {
-          "color": {},
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
-      "id": 2,
-      "options": {
-        "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
-      },
-      "targets": [
-        {
-          "expr": "(node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100",
-          "format": "time_series",
-          "legendFormat": "{{instance}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Memory Available (%)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {},
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
-      "id": 3,
-      "options": {
-        "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
-      },
-      "targets": [
-        {
-          "expr": "irate(node_network_receive_bytes_total[5m])",
-          "format": "time_series",
-          "legendFormat": "{{instance}} - RX",
-          "refId": "A"
-        },
-        {
-          "expr": "irate(node_network_transmit_bytes_total[5m])",
-          "format": "time_series",
-          "legendFormat": "{{instance}} - TX",
-          "refId": "B"
-        }
-      ],
-      "title": "Network Throughput (bytes/sec)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {},
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
-      "id": 4,
-      "options": {
-        "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
-      },
-      "targets": [
-        {
-          "expr": "irate(node_disk_read_bytes_total[5m])",
-          "format": "time_series",
-          "legendFormat": "{{instance}} - Read",
-          "refId": "A"
-        },
-        {
-          "expr": "irate(node_disk_written_bytes_total[5m])",
-          "format": "time_series",
-          "legendFormat": "{{instance}} - Write",
-          "refId": "B"
-        }
-      ],
-      "title": "Disk I/O (bytes/sec)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {},
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
-      "id": 5,
-      "options": {
-        "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
-      },
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, instance))",
-          "format": "time_series",
-          "legendFormat": "{{instance}} 95th pct",
-          "refId": "A"
-        }
-      ],
-      "title": "HTTP Request Latency (95th percentile)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": { "mode": "palette-classic" },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 0.5 },
-              { "color": "red", "value": 1 }
+              { "value": null, "color": "green" },
+              { "value": 70, "color": "orange" },
+              { "value": 90, "color": "red" }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
-      "id": 6,
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
+        "tooltip": { "mode": "single" },
+        "lineWidth": 2,
+        "fill": 1
       },
       "targets": [
         {
-          "expr": "node_load1",
-          "format": "time_series",
-          "legendFormat": "1m Load",
-          "refId": "A"
+          "expr": "100 - (avg by(instance)(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "refId": "A",
+          "legendFormat": "{{instance}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Memory Available (%)",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": null, "color": "red" },
+              { "value": 10, "color": "orange" },
+              { "value": 20, "color": "green" }
+            ]
+          }
         },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "single" },
+        "lineWidth": 2,
+        "fill": 1
+      },
+      "targets": [
         {
-          "expr": "node_load5",
-          "format": "time_series",
-          "legendFormat": "5m Load",
-          "refId": "B"
-        },
-        {
-          "expr": "node_load15",
-          "format": "time_series",
-          "legendFormat": "15m Load",
-          "refId": "C"
+          "expr": "(node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100",
+          "refId": "A",
+          "legendFormat": "{{instance}}"
         }
       ],
-      "title": "CPU Load Average",
-      "type": "timeseries",
       "alert": {
-        "conditions": [
-          {
-            "evaluator": { "params": [1], "type": "gt" },
-            "operator": { "type": "and" },
-            "query": { "params": ["A", "5m", "now"] },
-            "reducer": { "params": [], "type": "avg" },
-            "type": "query"
-          }
-        ],
-        "executionErrorState": "alerting",
+        "name": "High Memory Usage Alert",
         "frequency": "60s",
         "handler": 1,
-        "name": "High CPU Load Alert",
         "noDataState": "no_data",
-        "notifications": []
+        "executionErrorState": "alerting",
+        "notifications": [],
+        "conditions": [
+          {
+            "type": "query",
+            "query": { "params": ["A", "5m", "now"] },
+            "reducer": { "type": "avg", "params": [] },
+            "evaluator": { "type": "lt", "params": [10] },
+            "operator": { "type": "and" }
+          }
+        ]
       }
     },
     {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Network Throughput (bytes/sec)",
       "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
       "fieldConfig": {
         "defaults": {
-          "color": {},
+          "color": { "mode": "palette-classic" },
           "mappings": []
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "RX" },
+            "properties": [
+              { "id": "color", "value": { "mode": "fixed", "fixedColor": "blue" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "TX" },
+            "properties": [
+              { "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }
+            ]
+          }
+        ]
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
-      "id": 7,
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
+        "tooltip": { "mode": "single" },
+        "lineWidth": 2,
+        "fill": 1
       },
       "targets": [
         {
-          "expr": "spark_job_duration_seconds",
-          "format": "time_series",
-          "legendFormat": "{{instance}} - Spark Job Duration",
-          "refId": "A"
+          "expr": "irate(node_network_receive_bytes_total[5m])",
+          "refId": "A",
+          "legendFormat": "{{instance}} - RX"
         },
         {
-          "expr": "spark_job_run_count",
-          "format": "time_series",
-          "legendFormat": "{{instance}} - Spark Job Count",
-          "refId": "B"
+          "expr": "irate(node_network_transmit_bytes_total[5m])",
+          "refId": "B",
+          "legendFormat": "{{instance}} - TX"
         }
-      ],
-      "title": "Spark Metrics",
-      "type": "timeseries"
+      ]
     },
     {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Disk I/O (bytes/sec)",
       "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
       "fieldConfig": {
         "defaults": {
-          "color": {},
+          "color": { "mode": "palette-classic" },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Read" },
+            "properties": [
+              { "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Write" },
+            "properties": [
+              { "id": "color", "value": { "mode": "fixed", "fixedColor": "purple" } }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "single" },
+        "lineWidth": 2,
+        "fill": 1
+      },
+      "targets": [
+        {
+          "expr": "irate(node_disk_read_bytes_total[5m])",
+          "refId": "A",
+          "legendFormat": "{{instance}} - Read"
+        },
+        {
+          "expr": "irate(node_disk_written_bytes_total[5m])",
+          "refId": "B",
+          "legendFormat": "{{instance}} - Write"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "CPU Load Average",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": null, "color": "green" },
+              { "value": 12, "color": "orange" },
+              { "value": 16, "color": "red" }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "single" },
+        "lineWidth": 2,
+        "fill": 1
+      },
+      "targets": [
+        { "expr": "node_load1", "refId": "A", "legendFormat": "1m Load" },
+        { "expr": "node_load5", "refId": "B", "legendFormat": "5m Load" },
+        { "expr": "node_load15", "refId": "C", "legendFormat": "15m Load" }
+      ],
+      "alert": {
+        "name": "High CPU Load Alert",
+        "frequency": "60s",
+        "handler": 1,
+        "noDataState": "no_data",
+        "executionErrorState": "alerting",
+        "notifications": [],
+        "conditions": [
+          {
+            "type": "query",
+            "query": { "params": ["A", "5m", "now"] },
+            "reducer": { "type": "avg", "params": [] },
+            "evaluator": { "type": "gt", "params": [12] },
+            "operator": { "type": "and" }
+          }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Filesystem Usage (%)",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
           "mappings": []
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
-      "id": 8,
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
+        "tooltip": { "mode": "single" },
+        "lineWidth": 2,
+        "fill": 1
       },
       "targets": [
         {
           "expr": "((node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"} - node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\"}) / node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"}) * 100",
-          "format": "time_series",
-          "legendFormat": "{{instance}}",
-          "refId": "A"
+          "refId": "A",
+          "legendFormat": "{{instance}}"
         }
-      ],
-      "title": "Filesystem Usage (%)",
-      "type": "timeseries"
+      ]
     },
     {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Swap Usage (%)",
       "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
       "fieldConfig": {
         "defaults": {
-          "color": {},
+          "color": { "mode": "palette-classic" },
           "mappings": []
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
-      "id": 9,
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
+        "tooltip": { "mode": "single" },
+        "lineWidth": 2,
+        "fill": 1
       },
       "targets": [
         {
           "expr": "((node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) / node_memory_SwapTotal_bytes) * 100",
-          "format": "time_series",
-          "legendFormat": "{{instance}}",
-          "refId": "A"
+          "refId": "A",
+          "legendFormat": "{{instance}}"
         }
-      ],
-      "title": "Swap Usage (%)",
-      "type": "timeseries"
+      ]
     },
     {
+      "id": 12,
+      "type": "timeseries",
+      "title": "Process CPU Usage (%)",
       "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 40 },
       "fieldConfig": {
         "defaults": {
-          "color": {},
+          "color": { "mode": "palette-classic" },
           "mappings": []
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 40 },
-      "id": 10,
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
+        "tooltip": { "mode": "single" },
+        "lineWidth": 2,
+        "fill": 1
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(https_request_duration_seconds_bucket[5m])) by (le, instance))",
-          "format": "time_series",
-          "legendFormat": "{{instance}} 95th pct",
-          "refId": "A"
+          "expr": "rate(process_cpu_seconds_total[5m]) * 100",
+          "refId": "A",
+          "legendFormat": "{{instance}}"
         }
-      ],
-      "title": "HTTPS Request Latency (95th percentile)",
-      "type": "timeseries"
+      ]
     },
     {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Process Resident Memory (MB)",
       "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 40 },
       "fieldConfig": {
         "defaults": {
-          "color": {},
+          "color": { "mode": "palette-classic" },
           "mappings": []
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 48 },
-      "id": 11,
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
+        "tooltip": { "mode": "single" },
+        "lineWidth": 2,
+        "fill": 1
       },
       "targets": [
         {
-          "expr": "((hdfs_namenode_capacity_used_bytes) / (hdfs_namenode_capacity_total_bytes)) * 100",
-          "format": "time_series",
-          "legendFormat": "{{instance}}",
-          "refId": "A"
+          "expr": "process_resident_memory_bytes / 1024 / 1024",
+          "refId": "A",
+          "legendFormat": "{{instance}}"
         }
-      ],
-      "title": "HDFS Capacity Usage (%)",
-      "type": "timeseries"
+      ]
     }
   ],
   "refresh": "5s",
   "schemaVersion": 30,
-  "style": "dark",
-  "tags": [
-    "monitoring",
-    "essential"
-  ],
-  "templating": { "list": [] },
+  "tags": ["monitoring", "essential"],
+  "templating": {
+    "list": [
+      {
+        "name": "instance",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(node_load1, instance)",
+        "refresh": 1,
+        "multi": false,
+        "includeAll": false,
+        "label": "Instance"
+      }
+    ]
+  },
   "time": { "from": "now-6h", "to": "now" },
   "timepicker": {},
-  "timezone": "",
+  "timezone": "browser",
   "title": "Essential System Monitoring Dashboard",
   "uid": "essential-dashboard-uid",
-  "version": 1
+  "version": 6,
+  "iteration": 1745625600000
 }

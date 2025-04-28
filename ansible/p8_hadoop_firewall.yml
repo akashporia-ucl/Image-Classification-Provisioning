@@ -1,0 +1,22 @@
+# Playbook 8: Set up firewall
+# This playbook performs the following:
+# 1. Enables UFW on each node.
+# 2. Allows traffic from all cluster hosts as defined in the inventory.
+
+- name: Notify user about Playbook 8
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 8: Set up firewall rules on all nodes."
+
+- name: Set up firewall
+  become: true
+  become_user: root
+  hosts: all
+  tasks: 
+  - name: enable ufw
+    ansible.builtin.shell: "echo y | ufw enable"
+  - name: allow traffic from cluster hosts
+    ansible.builtin.shell: "ufw allow from {{ item }}"
+    loop: "{{ query('inventory_hostnames', 'all')  }}"

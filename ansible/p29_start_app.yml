@@ -1,4 +1,19 @@
 ---
+
+# Playbook 29: Launch React frontend and Python backend with screen sessions
+# This playbook performs the following:
+# 1. Installs React frontend dependencies.
+# 2. Starts the React frontend in a detached screen session on port 3501.
+# 3. Installs Python backend dependencies.
+# 4. Starts the Python backend in a detached screen session.
+
+- name: Notify user about Playbook 29
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 29: Launch React frontend and Python backend with screen sessions."
+
 - name: Launch React frontend and Python backend with screen (only after installs complete)
   hosts: management
   gather_facts: no

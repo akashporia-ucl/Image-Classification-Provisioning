@@ -1,0 +1,22 @@
+# Playbook 26: Remove Hadoop and Spark archives on all nodes
+# This playbook performs the following:
+# 1. Removes the Hadoop and Spark archive files if present.
+
+- name: Notify user about Playbook 26
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 26: Remove Hadoop and Spark archives on all nodes."
+
+- name: Install required Python packages on Spark workers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Remove Hadoop and Spark archives if they exist
+      file:
+        path: "/home/almalinux/{{ item }}"
+        state: absent
+      loop:
+        - hadoop.tar.gz
+        - spark.tgz

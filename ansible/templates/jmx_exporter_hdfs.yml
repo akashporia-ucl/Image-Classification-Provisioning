@@ -1,0 +1,16 @@
+# templates/jmx_exporter_hdfs.yaml
+startDelaySeconds: 0
+lowercaseOutputName: true
+whitelistObjectNames:
+  - "Hadoop:service=NameNode,name=NameNodeInfo"
+  - "Hadoop:service=NameNode,name=FSNamesystemState"
+  - "Hadoop:service=DataNode,name=DataNodeActivity-*"
+rules:
+  - pattern: 'Hadoop<service=(.+),name=(.+)><>CapacityTotal=(\d+)'  
+    name: hdfs_capacity_total_bytes
+    labels:
+      service: "$1"
+  - pattern: 'Hadoop<service=(.+),name=(.+)><>FSUsed=%(\d+)'  
+    name: hdfs_fs_used_percent
+    labels:
+      service: "$1"

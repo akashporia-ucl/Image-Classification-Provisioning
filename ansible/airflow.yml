@@ -1,0 +1,7 @@
+- name: Run all required playbooks in sequence to run pipeline
+  hosts: localhost
+  gather_facts: no
+  tasks: []
+
+- import_playbook: p31_install_airflow.yml
+- import_playbook: p32_start_airflow.yml

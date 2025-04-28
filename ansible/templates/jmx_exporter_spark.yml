@@ -1,0 +1,16 @@
+# templates/jmx_exporter_spark.yaml
+startDelaySeconds: 0
+lowercaseOutputName: true
+whitelistObjectNames:
+  - "org.apache.spark:type=executor,id=*"
+  - "org.apache.spark:type=driver,name=*"
+rules:
+  - pattern: 'org\.apache\.spark<type=(\w+),id=(\d+)><>JVMHeapMemory=(\d+)'  
+    name: spark_jvm_heap_bytes
+    labels:
+      component: "$1"
+      id: "$2"
+  - pattern: 'org\.apache\.spark<type=(\w+),id=(\d+)><>TotalCores=(\d+)'  
+    name: spark_total_cores
+    labels:
+      component: "$1"

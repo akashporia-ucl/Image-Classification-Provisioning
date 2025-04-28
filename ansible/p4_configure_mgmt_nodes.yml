@@ -1,0 +1,50 @@
+# Playbook 4: Install and configure Hadoop on management node
+# This playbook performs the following:
+# 1. Ensures the Hadoop group and user exist (optional).
+# 2. Prepares the NameNode directory with appropriate permissions.
+# 3. Ensures the Hadoop configuration directory exists.
+# 4. Generates the workers file from a Jinja2 template.
+
+- name: Notify user about Playbook 4
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 4: Install and configure Hadoop on the management node."
+
+
+- name: Install and configure hadoop on management node
+  hosts: management
+  become: yes
+  tasks:
+    - name: (Optional) Ensure group 'hadoop' exists
+      ansible.builtin.group:
+        name: hadoop
+        state: present
+
+    - name: (Optional) Ensure user 'hadoop' exists
+      ansible.builtin.user:
+        name: hadoop
+        group: hadoop
+        state: present
+
+    - name: Create namenode directory (owned by almalinux)
+      ansible.builtin.file:
+        path: /opt/hadoop_tmp/hdfs/namenode
+        state: directory
+        owner: almalinux
+        group: almalinux
+        mode: "0755"
+
+    - name: Ensure Hadoop configuration directory exists
+      ansible.builtin.file:
+        path: /home/almalinux/hadoop-3.4.0/etc/hadoop
+        state: directory
+        owner: almalinux
+        group: almalinux
+        mode: "0755"
+
+    - name: Generate worker file
+      ansible.builtin.template:
+        src: templates/workers.j2
+        dest: /home/almalinux/hadoop-3.4.0/etc/hadoop/workers

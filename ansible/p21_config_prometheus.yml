@@ -1,0 +1,31 @@
+---
+# Playbook 21: Configure Prometheus
+# This playbook configures Prometheus on the management node to scrape metrics from the configured targets
+# and reloads the Prometheus configuration to apply changes.
+
+- name: Notify user about Playbook 21
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 21: Configure Prometheus - This playbook updates Prometheus scrape configuration and reloads it to apply changes."
+
+- name: Configure Prometheus
+  hosts: management
+  become: yes
+  tasks:
+    # Step 1: Configure Prometheus scrape targets
+    - name: Configure Prometheus to scrape metrics
+      # Deploy the Prometheus configuration file (`prometheus.yml`) from a template.
+      # The configuration defines the scrape targets for Prometheus to collect metrics.
+      ansible.builtin.template:
+        src: "templates/prometheus.yml.j2"  # Dynamic path to the template file.
+        dest: /etc/prometheus/prometheus.yml
+        mode: '0644'
+
+    # Step 2: Reload Prometheus configuration
+    - name: Reload Prometheus
+      # Reload Prometheus to apply the updated configuration without restarting the service.
+      # This sends an HTTP POST request to the Prometheus `/-/reload` endpoint.
+      ansible.builtin.command:
+        cmd: curl -X POST http://localhost:9090/-/reload

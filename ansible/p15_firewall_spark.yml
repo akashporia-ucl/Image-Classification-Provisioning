@@ -1,0 +1,39 @@
+---
+# Playbook 15: Set Up Firewall for Cluster
+# This playbook configures the firewall on all nodes in the cluster by enabling UFW, allowing inter-node traffic,
+# and ensuring essential Spark ports are open.
+
+- name: Notify user about Playbook 15
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 15: Set Up Firewall for Cluster - This playbook enables UFW, allows inter-node traffic, and opens essential Spark ports."
+
+- name: Set up firewall
+  hosts: management, workers
+  become: true
+  tasks:
+    # Step 1: Enable the firewall
+    - name: Enable firewall
+      # Enable UFW on all nodes. The `echo y` ensures the command confirms the enable prompt automatically.
+      ansible.builtin.shell: "echo y | ufw enable"
+
+    # Step 2: Allow traffic between cluster nodes
+    - name: Allow traffic between cluster nodes
+      # Allow traffic from all nodes within the cluster by iterating through the group `all`.
+      ansible.builtin.shell: "ufw allow from {{ item }}"
+      loop: "{{ groups['all'] }}"  # Iterate through all nodes in the inventory
+
+    # Step 3: Allow essential Spark ports
+    - name: Allow essential Spark ports
+      # Open required ports for Spark's Master, Web UI, and Worker Web UI.
+      ansible.builtin.shell: |
+        ufw allow 7077    # Spark Master
+        ufw allow 8080    # Spark Web UI
+        ufw allow 8081    # Worker Web UI
+        ufw allow 3501
+        ufw allow 3500
+        ufw allow 8082
+        ufw allow 7777
+        ufw allow 9000

@@ -1,0 +1,10 @@
+- name: Run all required playbooks in sequence to run pipeline
+  hosts: localhost
+  gather_facts: no
+  tasks: []
+
+- import_playbook: p13_install_spark.yml
+- import_playbook: p14_spark_path.yml
+- import_playbook: p15_firewall_spark.yml
+- import_playbook: p16_start_spark_master.yml
+- import_playbook: p17_start_spark_worker.yml

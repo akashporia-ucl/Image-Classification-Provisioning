@@ -1,0 +1,12 @@
+- name: Run all required playbooks in sequence to run pipeline
+  hosts: localhost
+  gather_facts: no
+  tasks: []
+
+- import_playbook: p19_prometheus.yml
+- import_playbook: p20_node_exporter.yml
+- import_playbook: p21_config_prometheus.yml
+- import_playbook: p22_spark_metrics.yml
+- import_playbook: p23_grafana_v2.yml
+- import_playbook: p24_config_ports.yml
+- import_playbook: p25_custom_dashboard.yml

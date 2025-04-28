@@ -1,0 +1,40 @@
+# Playbook 5: Generate shared SSH keys
+# This playbook performs the following:
+# 1. Deletes any existing ed25519 SSH key pair.
+# 2. Generates a new ed25519 key pair without passphrase.
+# 3. Appends the public key to the authorized_keys for passwordless SSH.
+# 4. Fetches the generated private and public keys to the control node.
+
+- name: Notify user about Playbook 5
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 5: Generate shared SSH keys on management node."
+
+
+- name: Generate shared SSH keys
+  hosts: management
+  tasks: 
+  - name: Delete Existing Private Key
+    ansible.builtin.file:
+      state: absent 
+      path: /home/almalinux/.ssh/id_ed25519
+  - name: Delete Existing Public Key
+    ansible.builtin.file:
+      state: absent 
+      path: /home/almalinux/.ssh/id_ed25519.pub    
+  - name: Generate key
+    ansible.builtin.shell: ssh-keygen -q -t ed25519 -f /home/almalinux/.ssh/id_ed25519 -C "" -N ""
+  - name: Add to authorized_keys
+    ansible.builtin.shell: cat /home/almalinux/.ssh/id_ed25519.pub >> /home/almalinux/.ssh/authorized_keys
+  - name: Get private keys
+    ansible.builtin.fetch:
+      src: /home/almalinux/.ssh/id_ed25519
+      dest: ./.generated/temp_id_ed25519/
+      flat: true
+  - name: Get public keys
+    ansible.builtin.fetch:
+      src: /home/almalinux/.ssh/id_ed25519.pub
+      dest: ./.generated/temp_id_ed25519/
+      flat: true

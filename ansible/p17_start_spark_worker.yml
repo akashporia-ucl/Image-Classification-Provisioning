@@ -1,0 +1,44 @@
+---
+# Playbook 17: Start Spark Workers
+# This playbook stops any running Spark worker processes, cleans up the Spark work directory,
+# waits for the Spark master to be available, and then starts the Spark worker processes.
+
+- name: Notify user about Playbook 17
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 17: Start Spark Workers - This playbook stops existing Spark worker processes, cleans up the work directory, waits for the Spark master to be available, and starts the Spark workers."
+
+- name: Start Spark workers
+  hosts: workers
+  tasks:
+    # Step 1: Stop any running Spark worker processes
+    - name: Stop any running Spark worker processes
+      # Find and terminate any Spark worker processes currently running.
+      ansible.builtin.shell: |
+        pid=$(ps aux | grep '[o]rg.apache.spark.deploy.worker.Worker' | awk '{print $2}')
+        if [ -n "$pid" ]; then
+          kill -9 $pid
+        fi
+      ignore_errors: true  # Ignore errors if no process is found.
+
+    # Step 2: Clean Spark work directory
+    - name: Clean Spark work directory
+      # Remove the Spark work directory to ensure a clean state before starting the Spark worker.
+      ansible.builtin.file:
+        path: /home/almalinux/spark-3.5.3-bin-hadoop3-scala2.13/work/
+        state: absent
+
+    # Step 3: Wait for the Spark master to be up
+    - name: Wait for Spark master to be up
+      # Wait until the Spark master process is available on port 7077.
+      ansible.builtin.wait_for:
+        host: "{{ groups['management'][0] }}"
+        port: 7077
+        timeout: 30
+
+    # Step 4: Start Spark worker process
+    - name: Start Spark worker
+      # Start the Spark worker process and connect it to the Spark master.
+      ansible.builtin.shell: /home/almalinux/spark-3.5.3-bin-hadoop3-scala2.13/sbin/start-worker.sh spark://{{ groups['management'][0] }}:7077

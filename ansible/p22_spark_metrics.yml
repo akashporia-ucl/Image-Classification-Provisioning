@@ -1,0 +1,40 @@
+---
+# Playbook 22: Configure Spark Metrics Monitoring
+# This playbook ensures that the Spark configuration directory exists and sets up the Spark metrics configuration
+# to expose metrics for Prometheus monitoring.
+
+- name: Notify user about Playbook 22
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 22: Configure Spark Metrics Monitoring - This playbook sets up Spark metrics configuration for Prometheus monitoring."
+
+- name: Configure Spark Metrics Monitoring - Ensure Spark Config Directory Exists
+  hosts: all
+  become: yes
+  tasks:
+    # Step 1: Ensure Spark configuration directory exists
+    - name: Ensure Spark configuration directory exists
+      # Create the Spark configuration directory `/etc/spark/conf` if it does not already exist,
+      # with appropriate permissions.
+      ansible.builtin.file:
+        path: /etc/spark/conf
+        state: directory
+        mode: '0755'
+
+    # Step 2: Configure Spark metrics for Prometheus
+    - name: Ensure Spark metrics for Prometheus are configured (uncommented)
+      # Ensure the `metrics.properties` file exists and contains the required Spark Prometheus configuration.
+      # Lines will be added or updated in the file to configure Prometheus metrics collection.
+      ansible.builtin.lineinfile:
+        path: /etc/spark/conf/metrics.properties
+        create: yes  # Create the file if it does not already exist.
+        mode: '0644'
+        regexp: '^#?.*prometheusServlet.class.*$'  # Match lines with or without comments.
+        line: "{{ item }}"  # Define each configuration line.
+      with_items:
+        - "spark.metrics.conf.*.sink.prometheusServlet.class=org.apache.spark.metrics.sink.PrometheusServlet"
+        - "spark.metrics.conf.*.sink.prometheusServlet.path=/metrics"
+        - "spark.metrics.conf.master.sink.prometheusServlet.path=/metrics"
+        - "spark.metrics.conf.worker.sink.prometheusServlet.path=/metrics"

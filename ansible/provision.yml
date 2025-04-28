@@ -1,0 +1,7 @@
+- name: Run all required playbooks in sequence to run pipeline
+  hosts: localhost
+  gather_facts: no
+  tasks: []
+
+- import_playbook: p1_configure_basic_tools.yml
+- import_playbook: p2_assign_hostnames.yml

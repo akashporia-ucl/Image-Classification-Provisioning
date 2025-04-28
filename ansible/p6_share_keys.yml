@@ -1,0 +1,28 @@
+# Playbook 6: Share SSH keys across management and workers
+# This playbook performs the following:
+# 1. Copies the generated SSH private and public keys to all Hadoop nodes.
+# 2. Sets appropriate permissions on the key files.
+# 3. Appends the public key to authorized_keys to enable passwordless SSH.
+
+- name: Notify user about Playbook 6
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 6: Share SSH keys across management and worker nodes."
+
+- name: Share SSH keys
+  hosts: management:workers
+  tasks: 
+  - name: Put private keys
+    ansible.builtin.copy:
+      src: ./.generated/temp_id_ed25519/id_ed25519
+      dest: /home/almalinux/.ssh/id_ed25519
+      mode: 0600
+  - name: Put public keys
+    ansible.builtin.copy:
+      src: ./.generated/temp_id_ed25519/id_ed25519.pub
+      dest: /home/almalinux/.ssh/id_ed25519.pub
+      mode: 0600
+  - name: Add to authorized_keys
+    ansible.builtin.shell: cat /home/almalinux/.ssh/id_ed25519.pub >> /home/almalinux/.ssh/authorized_keys

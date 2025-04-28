@@ -1,0 +1,18 @@
+# Playbook 11: Prepare DataNode directory on worker nodes
+# This playbook performs the following:
+# 1. Ensures the DataNode directory exists on each worker node.
+
+- name: Notify user about Playbook 11
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 11: Prepare DataNode directory on worker nodes."
+
+- name: Install and configure hadoop
+  hosts: workers
+  tasks:
+    - name: create datanode
+      ansible.builtin.file:
+        path: /opt/hadoop_tmp/hdfs/datanode
+        state: directory

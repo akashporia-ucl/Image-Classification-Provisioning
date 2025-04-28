@@ -1,0 +1,24 @@
+# Playbook 10: Prepare NameNode directory and generate workers file on management node
+# This playbook performs the following:
+# 1. Ensures the NameNode directory exists on the management node.
+# 2. Generates the Hadoop workers file from a Jinja2 template.
+
+- name: Notify user about Playbook 10
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 10: Prepare NameNode directory and generate workers file on management node."
+
+- name: Install and configure hadoop
+  hosts: management
+  tasks:
+    - name: create namenode
+      ansible.builtin.file:
+        path: /opt/hadoop_tmp/hdfs/namenode
+        state: directory
+
+    - name: generate worker file
+      ansible.builtin.template:
+        src: templates/workers.j2
+        dest: hadoop-3.4.0/etc/hadoop/workers

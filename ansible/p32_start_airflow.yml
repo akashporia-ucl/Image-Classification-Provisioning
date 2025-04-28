@@ -1,0 +1,34 @@
+# Playbook 32: Start Airflow services on worker[0]
+# This playbook performs the following:
+# 1. Grants execute permission to the Airflow startup script.
+# 2. Launches the Airflow webserver and scheduler in the background.
+
+- name: Notify user about Playbook 32
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 32: Start Airflow services on worker[0]"
+
+- name: Start Airflow on workers[0]
+  hosts: workers[0]
+  become: true
+  become_user: almalinux
+
+  vars:
+    project_dir: /home/almalinux/Image-Classification-Model-Tuning
+    script: start-airflow-webserver-and-scheduler.sh
+
+  tasks:
+
+    - name: Give executable permission to shell script
+      shell: "sudo chmod +x /home/almalinux/Image-Classification-Model-Tuning/start-airflow-webserver-and-scheduler.sh"
+      become: yes
+
+    - name: Run the Airflow startup script
+      ansible.builtin.shell: |
+        bash {{ project_dir }}/{{ script }}
+      args:
+        chdir: "{{ project_dir }}"
+      async: 0
+      poll: 0

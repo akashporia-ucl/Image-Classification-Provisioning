@@ -1,0 +1,24 @@
+# Playbook 12: Format and start Hadoop services on management node
+# This playbook performs the following:
+# 1. Formats the HDFS NameNode.
+# 2. Starts the HDFS daemons.
+# 3. Starts the YARN daemons.
+
+- name: Notify user about Playbook 12
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 12: Format HDFS and start Hadoop services on the management node."
+
+- name: Install and configure hadoop
+  hosts: management
+  tasks:
+    - name: format cluster
+      ansible.builtin.shell: hdfs namenode -format
+
+    - name: start dfs
+      ansible.builtin.shell: nohup /home/almalinux/hadoop-3.4.0/sbin/start-dfs.sh
+
+    - name: start yarn
+      ansible.builtin.shell: nohup /home/almalinux/hadoop-3.4.0/sbin/start-yarn.sh

@@ -1,0 +1,18 @@
+# Playbook 7: Set up user config files
+# This playbook performs the following:
+# 1. Copies the SSH client configuration file to the user's .ssh directory.
+
+- name: Notify user about Playbook 7
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 7: Set up user SSH configuration files on all nodes."
+
+- name: Set up user config files
+  hosts: all
+  tasks: 
+  - name: ssh config
+    ansible.builtin.copy:
+      src: ./templates/ssh_config
+      dest: /home/almalinux/.ssh/config

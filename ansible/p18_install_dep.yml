@@ -1,0 +1,64 @@
+# Playbook 18: Install required Python packages on Spark worker nodes
+# This playbook performs the following:
+# 1. Ensures Python 3 and pip 3 are installed on each worker, depending on distribution.
+# 2. Upgrades pip to the latest version.
+# 3. Installs TensorFlow, NumPy, Pandas, PySpark and other libraries without caching.
+# 4. Removes Hadoop and Spark archives if present.
+
+- name: Notify user about Playbook 18
+  hosts: localhost
+  tasks:
+    - name: Display playbook message
+      ansible.builtin.debug:
+        msg: "Running Playbook 18: Install required Python packages on Spark worker nodes."
+
+- name: Install required Python packages on Spark workers
+  hosts: workers
+  become: yes
+  tasks:
+    - name: Ensure python3 and pip3 are installed on Debian/Ubuntu
+      apt:
+        name:
+          - python3
+          - python3-pip
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure python3 and pip3 are installed on RedHat/CentOS
+      yum:
+        name:
+          - python3
+          - python3-pip
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Upgrade pip to the latest version
+      pip:
+        name: pip
+        state: latest
+        executable: pip3
+
+    - name: Install TensorFlow, NumPy, Pandas, and PySpark without caching
+      pip:
+        name:
+          - "tensorflow>=2.5.0"
+          - numpy
+          - pandas
+          - "pyspark>=3.0.0"
+          - pillow
+          - torch
+          - torchvision
+          - pika
+          - scikit-learn
+          - hdfs3
+          - fsspec[hdfs]
+        executable: pip3
+        extra_args: "--no-cache-dir --ignore-installed"
+
+    - name: Remove Hadoop and Spark archives if they exist
+      file:
+        path: "/home/almalinux/{{ item }}"
+        state: absent
+      loop:
+        - hadoop.tar.gz
+        - spark.tgz
